@@ -4,7 +4,8 @@ import { Button, Icon, Col, Card, Row } from "antd";
 import Meta from "antd/lib/card/Meta";
 import ImageSlider from "../../utils/ImageSlider";
 import CheckBox from "./Sections/CheckBox";
-import { continents } from "./Sections/Datas";
+import RadioBox from "./Sections/RadioBox";
+import { continents, price } from "./Sections/Datas";
 
 function LandingPage() {
   const [Products, setProducts] = useState([]);
@@ -28,7 +29,6 @@ function LandingPage() {
   const getProducts = (body) => {
     axios.post("/api/product/products", body).then((response) => {
       if (response.data.success) {
-        console.log(response.data);
         if (body.loadMore) {
           setProducts([...Products, ...response.data.productInfo]);
         } else {
@@ -54,8 +54,6 @@ function LandingPage() {
   };
 
   const renderCards = Products.map((product, index) => {
-    console.log(product);
-
     return (
       <Col lg={6} md={8} xs={24} key={index}>
         <Card cover={<ImageSlider images={product.images} />}>
@@ -76,10 +74,29 @@ function LandingPage() {
     setSkip(0);
   };
 
+  const handlePrice = (value) => {
+    const data = price;
+    let array = [];
+    for (let key in data) {
+      if (data[key]._id === parseInt(value, 10)) {
+        array = data[key].array;
+      }
+    }
+    return array;
+  };
+
   const handleFilters = (filters, category) => {
     const newFilters = { ...Filters };
     newFilters[category] = filters;
+    console.log(filters);
+
+    if (category === "price") {
+      let priceValues = handlePrice(filters);
+      newFilters[category] = priceValues;
+    }
+
     showFilteredResults(newFilters);
+    setFilters(newFilters);
   };
 
   return (
@@ -93,10 +110,16 @@ function LandingPage() {
 
       {/* Filter */}
 
-      {/* CheckBox */}
-      <CheckBox list={continents} handleFilters={(filters) => handleFilters(filters, "continents")} />
-
-      {/* RadioBox */}
+      <Row gutter={[16, 16]}>
+        <Col lg={12} xs={24}>
+          {/* CheckBox */}
+          <CheckBox list={continents} handleFilters={(filters) => handleFilters(filters, "continents")} />
+        </Col>
+        <Col lg={12} xs={24}>
+          {/* RadioBox */}
+          <RadioBox list={price} handleFilters={(filters) => handleFilters(filters, "price")} />
+        </Col>
+      </Row>
 
       {/* Search */}
 
