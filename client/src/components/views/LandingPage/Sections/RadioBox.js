@@ -20,8 +20,8 @@ const RadioBox = (props) => {
   };
 
   return (
-    <Collapse defaultActiveKey={["1"]}>
-      <Panel header="This is panel header 1" key="1">
+    <Collapse defaultActiveKey={["0"]}>
+      <Panel header="Price" key="1">
         <Radio.Group onChange={handleChange} value={Value}>
           {renderRadioBoxLists()}
         </Radio.Group>
